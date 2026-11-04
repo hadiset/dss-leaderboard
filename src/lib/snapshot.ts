@@ -77,11 +77,6 @@ export function sepuluhBesar(data: Entri[]): Entri[] {
 	return data.filter((entri) => entri.rank <= RANK_TERAKHIR);
 }
 
-export function filterEntri(data: Entri[], query: string): Entri[] {
-	const kata = query.trim().toLocaleLowerCase('id-ID');
-	return data.filter((entri) => entri.nama.toLocaleLowerCase('id-ID').includes(kata));
-}
-
 /** Tied entries at rank 3 all become cards, so nobody is demoted by name order. */
 export function splitTop(data: Entri[]): { top: Entri[]; rest: Entri[] } {
 	return {

@@ -57,6 +57,6 @@ OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
 - Refresh tiap 5 menit hanya saat `document.visibilityState === 'visible'`, demi kuota request Function.
 - Function adalah batas keamanan bucket: `leaderboard` harus ada di whitelist dan `key` hanya boleh `terbaru`, `index`, atau `YYYY-MM`. Selain itu balas 404, termasuk key berisi `..`. Error R2 dibalas 502 tanpa detail internal.
 - History publik dan tetap di halaman `/`: `?periode=YYYY-MM` memilih arsip, tanpa parameter memakai `terbaru`. Gagal berpindah periode tidak boleh meninggalkan pemilih atau URL yang menyebut periode lain dari yang tampil.
-- Hanya `rank <= 10` yang tampil, termasuk di arsip dan pencarian; JSON tetap memuat semua entri.
+- Hanya `rank <= 10` yang tampil, termasuk di arsip; JSON tetap memuat semua entri.
 - Tier `End User` dari JSON tampil sebagai "Dropship" lewat `formatTier`.
 - Teks antarmuka berbahasa Indonesia.

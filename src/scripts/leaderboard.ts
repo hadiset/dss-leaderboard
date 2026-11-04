@@ -1,6 +1,5 @@
 import { formatDiperbarui, formatPeriode, formatRupiah, formatTier } from '../lib/format';
 import {
-	filterEntri,
 	isUsang,
 	parseIndex,
 	parseSnapshot,
@@ -37,9 +36,6 @@ const cobaLagi = byId<HTMLButtonElement>('coba-lagi');
 const skeleton = byId('skeleton');
 const konten = byId('konten');
 const kosong = byId('kosong');
-const cari = byId<HTMLInputElement>('cari');
-const pencarian = byId('pencarian');
-const tanpaHasil = byId('tanpa-hasil');
 const top3 = byId('top3');
 const tabel = byId('tabel');
 const daftar = byId('daftar');
@@ -66,13 +62,11 @@ function buatEntri(template: HTMLTemplateElement, entri: Entri): HTMLElement {
 }
 
 function renderEntri(data: Entri[]) {
-	const hasil = filterEntri(sepuluhBesar(data), cari.value);
-	const { top, rest } = splitTop(hasil);
+	const { top, rest } = splitTop(sepuluhBesar(data));
 	top3.replaceChildren(...top.map((entri) => buatEntri(templateKartu, entri)));
 	daftar.replaceChildren(...rest.map((entri) => buatEntri(templateBaris, entri)));
 	top3.hidden = top.length === 0;
 	tabel.hidden = rest.length === 0;
-	tanpaHasil.hidden = hasil.length > 0;
 }
 
 function render(data: Snapshot) {
@@ -87,7 +81,6 @@ function render(data: Snapshot) {
 
 	const adaData = data.data.length > 0;
 	kosong.hidden = adaData;
-	pencarian.hidden = !adaData;
 	konten.hidden = !adaData;
 	if (adaData) renderEntri(data.data);
 }
@@ -166,9 +159,6 @@ function refreshIfDue() {
 	}
 }
 
-cari.addEventListener('input', () => {
-	if (snapshot) renderEntri(snapshot.data);
-});
 pilihan.addEventListener('change', () => void load(pilihan.value, true));
 cobaLagi.addEventListener('click', () => void load(percobaan, percobaan !== aktif));
 window.addEventListener('popstate', () => void load(periodeDariUrl(location.search) ?? 'terbaru'));

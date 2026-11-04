@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import terbaru from '../fixtures/terbaru.json';
 import {
 	REFRESH_MS,
-	filterEntri,
 	isUsang,
 	parseIndex,
 	parseSnapshot,
@@ -94,18 +93,6 @@ describe('sepuluhBesar', () => {
 		const data = [10, 10, 12].map((rank) => ({ rank, nama: 'Seller', nilai_bersih: '1xx.xxx' }));
 
 		expect(sepuluhBesar(data).map((entri) => entri.rank)).toEqual([10, 10]);
-	});
-});
-
-describe('filterEntri', () => {
-	it('matches case-insensitively and keeps the original rank', () => {
-		expect(filterEntri(terbaru.data, '  seller d ')).toEqual([
-			{ rank: 3, nama: 'Seller D', nilai_bersih: '1xx.xxx' },
-		]);
-	});
-
-	it('returns everything for an empty query', () => {
-		expect(filterEntri(terbaru.data, '')).toHaveLength(terbaru.data.length);
 	});
 });
 
