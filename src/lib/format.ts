@@ -20,6 +20,12 @@ const bulan = new Intl.DateTimeFormat('id-ID', {
 	timeZone: 'UTC',
 });
 
+const LABEL_TIER: Record<string, string> = { 'End User': 'Dropship' };
+
+export function formatTier(tier: string): string {
+	return LABEL_TIER[tier] ?? tier;
+}
+
 export function formatRupiah(nilai: number | string): string {
 	const teks = typeof nilai === 'number' ? nominal.format(nilai) : nilai;
 	return teks.startsWith('-') ? `-Rp${teks.slice(1)}` : `Rp${teks}`;

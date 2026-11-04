@@ -7,6 +7,7 @@ import {
 	parseIndex,
 	parseSnapshot,
 	periodeDariUrl,
+	sepuluhBesar,
 	shouldRefresh,
 	splitTop,
 } from '../src/lib/snapshot';
@@ -79,6 +80,20 @@ describe('splitTop', () => {
 
 		expect(top.map((entri) => entri.rank)).toEqual([1, 2, 3, 3]);
 		expect(rest[0].rank).toBe(5);
+	});
+});
+
+describe('sepuluhBesar', () => {
+	it('stops at rank 10', () => {
+		expect(sepuluhBesar(terbaru.data).map((entri) => entri.rank)).toEqual([
+			1, 2, 3, 3, 5, 6, 7, 7, 9, 10,
+		]);
+	});
+
+	it('keeps ties at rank 10', () => {
+		const data = [10, 10, 12].map((rank) => ({ rank, nama: 'Seller', nilai_bersih: '1xx.xxx' }));
+
+		expect(sepuluhBesar(data).map((entri) => entri.rank)).toEqual([10, 10]);
 	});
 });
 

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { formatDiperbarui, formatPeriode, formatRupiah } from '../src/lib/format';
+import { formatDiperbarui, formatPeriode, formatRupiah, formatTier } from '../src/lib/format';
+
+describe('formatTier', () => {
+	it('shows End User as Dropship and leaves other tiers alone', () => {
+		expect(formatTier('End User')).toBe('Dropship');
+		expect(formatTier('Reseller')).toBe('Reseller');
+	});
+});
 
 describe('formatRupiah', () => {
 	it('formats without a space or decimals', () => {

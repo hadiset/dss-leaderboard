@@ -1,6 +1,7 @@
 const SCHEMA_VERSION = 1;
 const USANG_MS = 48 * 60 * 60 * 1000;
 export const REFRESH_MS = 5 * 60 * 1000;
+const RANK_TERAKHIR = 10;
 const PERIODE_PATTERN = /^\d{4}-\d{2}$/;
 
 export interface Entri {
@@ -69,6 +70,11 @@ export function periodeDariUrl(search: string): string | null {
 
 export function isUsang(diperbarui: string, now: number): boolean {
 	return now - Date.parse(diperbarui) > USANG_MS;
+}
+
+/** Ties at the last rank stay in, as with the top 3 cards. */
+export function sepuluhBesar(data: Entri[]): Entri[] {
+	return data.filter((entri) => entri.rank <= RANK_TERAKHIR);
 }
 
 export function filterEntri(data: Entri[], query: string): Entri[] {

@@ -1,10 +1,11 @@
-import { formatDiperbarui, formatPeriode, formatRupiah } from '../lib/format';
+import { formatDiperbarui, formatPeriode, formatRupiah, formatTier } from '../lib/format';
 import {
 	filterEntri,
 	isUsang,
 	parseIndex,
 	parseSnapshot,
 	periodeDariUrl,
+	sepuluhBesar,
 	shouldRefresh,
 	splitTop,
 	type Entri,
@@ -65,7 +66,7 @@ function buatEntri(template: HTMLTemplateElement, entri: Entri): HTMLElement {
 }
 
 function renderEntri(data: Entri[]) {
-	const hasil = filterEntri(data, cari.value);
+	const hasil = filterEntri(sepuluhBesar(data), cari.value);
 	const { top, rest } = splitTop(hasil);
 	top3.replaceChildren(...top.map((entri) => buatEntri(templateKartu, entri)));
 	daftar.replaceChildren(...rest.map((entri) => buatEntri(templateBaris, entri)));
@@ -75,7 +76,7 @@ function renderEntri(data: Entri[]) {
 }
 
 function render(data: Snapshot) {
-	judul.textContent = `${data.platform} · ${data.tier}`;
+	judul.textContent = `${data.platform} · ${formatTier(data.tier)}`;
 	periode.textContent = formatPeriode(data.periode.key);
 	pilihan.value = data.periode.key;
 	diperbarui.textContent = `Diperbarui ${formatDiperbarui(data.diperbarui)}`;
