@@ -42,9 +42,10 @@ OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
 ```
 
 - **Halaman:** Astro output statis, Tailwind v4 lewat plugin Vite (`@tailwindcss/vite`, diimpor di `src/styles/global.css`), mobile-first, tanpa scroll horizontal di lebar 360 px.
-- **Client:** satu script vanilla TypeScript `src/scripts/leaderboard.ts` untuk fetch, render, dan refresh. Formatter di `src/lib/format.ts`. Tanpa React (NFR-03).
+- **Client:** satu script vanilla TypeScript `src/scripts/leaderboard.ts` untuk fetch, render, dan refresh. Formatter di `src/lib/format.ts`, validasi dan aturan murni di `src/lib/snapshot.ts`. Markup entri ada di `<template>` pada `index.astro` supaya class Tailwind terbaca; isinya wajib lewat `textContent`. Tanpa React (NFR-03).
 - **Function:** `functions/api/[leaderboard]/[key].ts` membaca R2 lewat binding `LEADERBOARD_BUCKET` (dideklarasikan di `wrangler.toml`). Folder `functions/` ada di root repo, bukan di `src/`.
-- **Dev lokal:** `fixtures/terbaru.json` mengisi bucket R2 lokal.
+- **Dev lokal:** `npm run seed` mengisi bucket R2 lokal dari `fixtures/`. Skenario: `terbaru`, `kosong`, `schema-99`, `usang`, dan `hapus`. Function menyimpan cache 60 detik, jadi perubahan seed baru terlihat setelah itu atau setelah `pages:dev` diulang.
+- **`src/pages/404.astro` wajib ada:** tanpa `404.html`, Cloudflare Pages memperlakukan situs sebagai SPA dan membalas 200 untuk path tak dikenal, termasuk di bawah `/api/`.
 
 ## Aturan yang mudah terlewat
 
