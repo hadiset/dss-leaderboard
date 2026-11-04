@@ -44,7 +44,7 @@ OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
 - **Halaman:** Astro output statis, Tailwind v4 lewat plugin Vite (`@tailwindcss/vite`, diimpor di `src/styles/global.css`), mobile-first, tanpa scroll horizontal di lebar 360 px.
 - **Client:** satu script vanilla TypeScript `src/scripts/leaderboard.ts` untuk fetch, render, dan refresh. Formatter di `src/lib/format.ts`, validasi dan aturan murni di `src/lib/snapshot.ts`. Markup entri ada di `<template>` pada `index.astro` supaya class Tailwind terbaca; isinya wajib lewat `textContent`. Tanpa React (NFR-03).
 - **Function:** `functions/api/[leaderboard]/[key].ts` membaca R2 lewat binding `LEADERBOARD_BUCKET` (dideklarasikan di `wrangler.toml`). Folder `functions/` ada di root repo, bukan di `src/`.
-- **Dev lokal:** `npm run seed` mengisi bucket R2 lokal dari `fixtures/`. Skenario: `terbaru`, `kosong`, `schema-99`, `usang`, dan `hapus`. Function menyimpan cache 60 detik, jadi perubahan seed baru terlihat setelah itu atau setelah `pages:dev` diulang.
+- **Dev lokal:** `npm run seed` mengisi bucket R2 lokal dari `fixtures/`. Skenario `terbaru`, `kosong`, `schema-99`, `usang`, dan `hapus` mengganti `terbaru.json`; skenario `arsip` mengisi `index.json` dan dua arsip, supaya pemilih periode muncul. Function menyimpan cache 60 detik, jadi perubahan seed baru terlihat setelah itu atau setelah `pages:dev` diulang.
 - **`src/pages/404.astro` wajib ada:** tanpa `404.html`, Cloudflare Pages memperlakukan situs sebagai SPA dan membalas 200 untuk path tak dikenal, termasuk di bawah `/api/`.
 
 ## Aturan yang mudah terlewat
@@ -55,6 +55,6 @@ OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
 - `nilai_bersih` berupa string yang sengaja disamarkan OMS, seperti `5.6xx.xxx`. Tampilkan apa adanya dengan awalan `Rp`. Periode ada di `periode.bulan`; `parseSnapshot` menormalkannya ke `periode.key` dan masih menerima bentuk lama.
 - Saat fetch gagal, data yang sudah tampil tidak boleh dihapus.
 - Refresh tiap 5 menit hanya saat `document.visibilityState === 'visible'`, demi kuota request Function.
-- Function adalah batas keamanan bucket: `leaderboard` harus ada di whitelist dan di Slice 5 `key` hanya boleh `terbaru`. Selain itu balas 404, termasuk `index`, `YYYY-MM`, dan key berisi `..`. Error R2 dibalas 502 tanpa detail internal.
-- Halaman history dan akses khusus di luar scope Slice 5.
+- Function adalah batas keamanan bucket: `leaderboard` harus ada di whitelist dan `key` hanya boleh `terbaru`, `index`, atau `YYYY-MM`. Selain itu balas 404, termasuk key berisi `..`. Error R2 dibalas 502 tanpa detail internal.
+- History publik dan tetap di halaman `/`: `?periode=YYYY-MM` memilih arsip, tanpa parameter memakai `terbaru`. Gagal berpindah periode tidak boleh meninggalkan pemilih atau URL yang menyebut periode lain dari yang tampil.
 - Teks antarmuka berbahasa Indonesia.

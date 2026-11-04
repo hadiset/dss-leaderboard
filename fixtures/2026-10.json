@@ -1,0 +1,44 @@
+{
+	"schema_version": 1,
+	"platform": "Sekolah Seller",
+	"tier": "End User",
+	"periode": {
+		"bulan": "2026-10",
+		"dari": "2026-10-01",
+		"sampai": "2026-10-31"
+	},
+	"final": true,
+	"diperbarui": "2026-11-03T23:55:00+07:00",
+	"data": [
+		{
+			"rank": 1,
+			"nama": "Arsip A",
+			"nilai_bersih": "5.1xx.xxx"
+		},
+		{
+			"rank": 2,
+			"nama": "Arsip B",
+			"nilai_bersih": "4.9xx.xxx"
+		},
+		{
+			"rank": 3,
+			"nama": "Arsip C",
+			"nilai_bersih": "1xx.xxx"
+		},
+		{
+			"rank": 3,
+			"nama": "Arsip D",
+			"nilai_bersih": "1xx.xxx"
+		},
+		{
+			"rank": 5,
+			"nama": "Arsip E",
+			"nilai_bersih": "1xx.xxx"
+		},
+		{
+			"rank": 6,
+			"nama": "Arsip F",
+			"nilai_bersih": "1xx.xxx"
+		}
+	]
+}

@@ -4,7 +4,9 @@ import {
 	REFRESH_MS,
 	filterEntri,
 	isUsang,
+	parseIndex,
 	parseSnapshot,
+	periodeDariUrl,
 	shouldRefresh,
 	splitTop,
 } from '../src/lib/snapshot';
@@ -38,6 +40,37 @@ describe('parseSnapshot', () => {
 	])('rejects %s', (_, value) => {
 		expect(parseSnapshot(value)).toBeNull();
 	});
+});
+
+describe('parseIndex', () => {
+	it('accepts the production shape', () => {
+		expect(parseIndex({ schema_version: 1, periode: ['2026-11', '2026-10'] })).toEqual([
+			'2026-11',
+			'2026-10',
+		]);
+	});
+
+	it.each([
+		['unknown schema', { schema_version: 99, periode: ['2026-11'] }],
+		['objects instead of keys', { schema_version: 1, periode: [{ key: '2026-11' }] }],
+		['missing list', { schema_version: 1 }],
+		['null', null],
+	])('rejects %s', (_, value) => {
+		expect(parseIndex(value)).toBeNull();
+	});
+});
+
+describe('periodeDariUrl', () => {
+	it('reads a valid period', () => {
+		expect(periodeDariUrl('?periode=2026-10')).toBe('2026-10');
+	});
+
+	it.each(['', '?periode=', '?periode=index', '?periode=../index', '?periode=2026-1'])(
+		'ignores %s',
+		(search) => {
+			expect(periodeDariUrl(search)).toBeNull();
+		},
+	);
 });
 
 describe('splitTop', () => {

@@ -3,10 +3,20 @@ interface Env {
 }
 
 const LEADERBOARDS = new Set(['sekolah-seller_end-user']);
-const KEYS = new Set(['terbaru']);
+const KEY_PATTERN = /^(terbaru|index|\d{4}-\d{2})$/;
 
 function errorResponse(error: string, status: number) {
 	return Response.json({ error }, { status, headers: { 'Cache-Control': 'no-store' } });
+}
+
+function cacheControl(key: string, body: string) {
+	if (key === 'terbaru') return 'public, max-age=60';
+	if (key === 'index') return 'public, max-age=300';
+	try {
+		return JSON.parse(body).final === true ? 'public, max-age=86400' : 'public, max-age=60';
+	} catch {
+		return 'public, max-age=60';
+	}
 }
 
 export const onRequestGet: PagesFunction<Env, 'leaderboard' | 'key'> = async ({
@@ -20,7 +30,7 @@ export const onRequestGet: PagesFunction<Env, 'leaderboard' | 'key'> = async ({
 		typeof leaderboard !== 'string' ||
 		typeof key !== 'string' ||
 		!LEADERBOARDS.has(leaderboard) ||
-		!KEYS.has(key)
+		!KEY_PATTERN.test(key)
 	) {
 		return errorResponse('not_found', 404);
 	}
@@ -37,8 +47,9 @@ export const onRequestGet: PagesFunction<Env, 'leaderboard' | 'key'> = async ({
 		const object = await env.LEADERBOARD_BUCKET.get(`${leaderboard}/${key}.json`);
 		if (!object) return errorResponse('not_found', 404);
 
-		const response = new Response(object.body, {
-			headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+		const body = await object.text();
+		const response = new Response(body, {
+			headers: { 'Content-Type': 'application/json', 'Cache-Control': cacheControl(key, body) },
 		});
 		waitUntil(caches.default.put(cacheKey, response.clone()));
 		return response;

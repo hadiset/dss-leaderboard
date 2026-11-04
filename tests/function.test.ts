@@ -24,7 +24,7 @@ function call(leaderboard: string, key: string, query = '') {
 beforeEach(() => {
 	store.clear();
 	get.mockReset();
-	get.mockImplementation(async () => ({ body: BODY }));
+	get.mockImplementation(async () => ({ text: async () => BODY }));
 	vi.spyOn(console, 'error').mockImplementation(() => {});
 	vi.stubGlobal('caches', {
 		default: {
@@ -45,6 +45,20 @@ describe('GET /api/:leaderboard/:key', () => {
 		expect(get).toHaveBeenCalledWith('sekolah-seller_end-user/terbaru.json');
 	});
 
+	it.each([
+		['index', BODY, 'public, max-age=300'],
+		['2026-10', '{"final":true}', 'public, max-age=86400'],
+		['2026-11', '{"final":false}', 'public, max-age=60'],
+		['2026-09', 'not json', 'public, max-age=60'],
+	])('serves %s with its own cache lifetime', async (key, body, cacheControl) => {
+		get.mockResolvedValue({ text: async () => body });
+		const response = await call('sekolah-seller_end-user', key);
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get('Cache-Control')).toBe(cacheControl);
+		expect(get).toHaveBeenCalledWith(`sekolah-seller_end-user/${key}.json`);
+	});
+
 	it('reads R2 once for repeated requests, even with a different query', async () => {
 		await call('sekolah-seller_end-user', 'terbaru');
 		const second = await call('sekolah-seller_end-user', 'terbaru', '?x=1');
@@ -54,8 +68,9 @@ describe('GET /api/:leaderboard/:key', () => {
 	});
 
 	it.each([
-		['sekolah-seller_end-user', 'index'],
-		['sekolah-seller_end-user', '2026-11'],
+		['sekolah-seller_end-user', '2026-1'],
+		['sekolah-seller_end-user', '2026-11.json'],
+		['sekolah-seller_end-user', 'abcd-ef'],
 		['sekolah-seller_end-user', '..'],
 		['sekolah-seller_end-user', '../index'],
 		['lain', 'terbaru'],

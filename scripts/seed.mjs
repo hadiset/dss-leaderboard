@@ -2,27 +2,33 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
-const OBJECT = 'dss/sekolah-seller_end-user/terbaru.json';
+const FOLDER = 'dss/sekolah-seller_end-user';
 const scenario = process.argv[2] ?? 'terbaru';
 
-const args =
-	scenario === 'hapus'
-		? ['r2', 'object', 'delete', OBJECT, '--local']
-		: [
-				'r2',
-				'object',
-				'put',
-				OBJECT,
-				'--file',
-				`fixtures/${scenario}.json`,
-				'--content-type',
-				'application/json',
-				'--local',
-			];
+function wrangler(...args) {
+	execFileSync('npx', ['wrangler', 'r2', 'object', ...args, '--local'], { stdio: 'inherit' });
+}
 
-if (scenario !== 'hapus' && !existsSync(`fixtures/${scenario}.json`)) {
+function put(object, fixture) {
+	wrangler(
+		'put',
+		`${FOLDER}/${object}.json`,
+		'--file',
+		`fixtures/${fixture}.json`,
+		'--content-type',
+		'application/json',
+	);
+}
+
+if (scenario === 'hapus') {
+	wrangler('delete', `${FOLDER}/terbaru.json`);
+} else if (scenario === 'arsip') {
+	put('index', 'index');
+	put('2026-11', 'terbaru');
+	put('2026-10', '2026-10');
+} else if (existsSync(`fixtures/${scenario}.json`)) {
+	put('terbaru', scenario);
+} else {
 	console.error(`Skenario tidak dikenal: ${scenario}`);
 	process.exit(1);
 }
-
-execFileSync('npx', ['wrangler', ...args], { stdio: 'inherit' });

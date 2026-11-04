@@ -1,6 +1,7 @@
 const SCHEMA_VERSION = 1;
 const USANG_MS = 48 * 60 * 60 * 1000;
 export const REFRESH_MS = 5 * 60 * 1000;
+const PERIODE_PATTERN = /^\d{4}-\d{2}$/;
 
 export interface Entri {
 	rank: number;
@@ -42,12 +43,28 @@ export function parseSnapshot(value: unknown): Snapshot | null {
 		snapshot?.schema_version === SCHEMA_VERSION &&
 		typeof snapshot.platform === 'string' &&
 		typeof snapshot.tier === 'string' &&
-		/^\d{4}-\d{2}$/.test(key ?? '') &&
+		PERIODE_PATTERN.test(key ?? '') &&
 		typeof snapshot.final === 'boolean' &&
 		!Number.isNaN(Date.parse(snapshot.diperbarui)) &&
 		Array.isArray(snapshot.data) &&
 		snapshot.data.every(isEntri);
 	return valid ? { ...snapshot, periode: { key: key as string } } : null;
+}
+
+/** Returns null when the payload is not a period index this page understands. */
+export function parseIndex(value: unknown): string[] | null {
+	const index = value as { schema_version?: number; periode?: unknown } | null;
+	const periode = index?.periode;
+	const valid =
+		index?.schema_version === SCHEMA_VERSION &&
+		Array.isArray(periode) &&
+		periode.every((key) => PERIODE_PATTERN.test(key));
+	return valid ? (periode as string[]) : null;
+}
+
+export function periodeDariUrl(search: string): string | null {
+	const key = new URLSearchParams(search).get('periode');
+	return key && PERIODE_PATTERN.test(key) ? key : null;
 }
 
 export function isUsang(diperbarui: string, now: number): boolean {
