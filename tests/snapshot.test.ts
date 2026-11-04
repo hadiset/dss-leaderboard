@@ -10,8 +10,22 @@ import {
 } from '../src/lib/snapshot';
 
 describe('parseSnapshot', () => {
-	it('accepts the fixture', () => {
-		expect(parseSnapshot(terbaru)).toEqual(terbaru);
+	it('accepts the production shape and exposes periode.key', () => {
+		const snapshot = parseSnapshot(terbaru);
+
+		expect(snapshot?.periode.key).toBe('2026-11');
+		expect(snapshot?.data).toEqual(terbaru.data);
+	});
+
+	it('accepts the PRD contract shape', () => {
+		const snapshot = parseSnapshot({
+			...terbaru,
+			periode: { key: '2026-11' },
+			data: [{ rank: 1, nama: 'Seller A', nilai_bersih: 5155000 }],
+		});
+
+		expect(snapshot?.periode.key).toBe('2026-11');
+		expect(snapshot?.data[0].nilai_bersih).toBe(5155000);
 	});
 
 	it.each([
@@ -38,7 +52,7 @@ describe('splitTop', () => {
 describe('filterEntri', () => {
 	it('matches case-insensitively and keeps the original rank', () => {
 		expect(filterEntri(terbaru.data, '  seller d ')).toEqual([
-			{ rank: 3, nama: 'Seller D', nilai_bersih: 190000 },
+			{ rank: 3, nama: 'Seller D', nilai_bersih: '1xx.xxx' },
 		]);
 	});
 

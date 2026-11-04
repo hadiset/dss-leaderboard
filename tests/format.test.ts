@@ -9,6 +9,11 @@ describe('formatRupiah', () => {
 
 	it('keeps the sign for net returns', () => {
 		expect(formatRupiah(-75000)).toBe('-Rp75.000');
+		expect(formatRupiah('-7x.xxx')).toBe('-Rp7x.xxx');
+	});
+
+	it('shows masked values from OMS as they are', () => {
+		expect(formatRupiah('5.6xx.xxx')).toBe('Rp5.6xx.xxx');
 	});
 });
 

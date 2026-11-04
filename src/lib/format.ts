@@ -20,8 +20,9 @@ const bulan = new Intl.DateTimeFormat('id-ID', {
 	timeZone: 'UTC',
 });
 
-export function formatRupiah(nilai: number): string {
-	return `${nilai < 0 ? '-' : ''}Rp${nominal.format(Math.abs(nilai))}`;
+export function formatRupiah(nilai: number | string): string {
+	const teks = typeof nilai === 'number' ? nominal.format(nilai) : nilai;
+	return teks.startsWith('-') ? `-Rp${teks.slice(1)}` : `Rp${teks}`;
 }
 
 export function formatPeriode(key: string): string {

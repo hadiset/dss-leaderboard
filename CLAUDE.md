@@ -52,6 +52,7 @@ OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
 - Frontend hanya memformat. `rank` dan `nilai_bersih` dipakai apa adanya dari JSON; jangan menghitung ulang atau mengurutkan ulang. Rank kembar (1, 2, 3, 3, 5) tampil sama.
 - Tolak `schema_version` selain `1` dengan pesan "Format data tidak dikenali".
 - Format tanggal dan uang memakai `Intl`, locale `id-ID`, zona `Asia/Jakarta`. Rupiah tampil seperti `Rp5.155.000`, tanpa desimal.
+- Data produksi berbeda dari kontrak PRD: `periode.bulan` menggantikan `periode.key`, `nilai_bersih` berupa string tersamar seperti `5.6xx.xxx`, dan field `leaderboard` tidak ada. Penyamaran itu disengaja, jadi tampilkan apa adanya dengan awalan `Rp`. `parseSnapshot` menerima kedua bentuk, dan `fixtures/` mengikuti bentuk produksi.
 - Saat fetch gagal, data yang sudah tampil tidak boleh dihapus.
 - Refresh tiap 5 menit hanya saat `document.visibilityState === 'visible'`, demi kuota request Function.
 - Function adalah batas keamanan bucket: `leaderboard` harus ada di whitelist dan di Slice 5 `key` hanya boleh `terbaru`. Selain itu balas 404, termasuk `index`, `YYYY-MM`, dan key berisi `..`. Error R2 dibalas 502 tanpa detail internal.
