@@ -1,0 +1,7 @@
+name = "dss-leaderboard"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"
+
+[[r2_buckets]]
+binding = "LEADERBOARD_BUCKET"
+bucket_name = "dss"

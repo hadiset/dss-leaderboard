@@ -1,0 +1,58 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Status project
+
+Repo ini adalah frontend leaderboard publik (Slice 5 dan 6 di `Leaderboard OMS — PRD & SDD.md`). Bucket R2 dan file JSON-nya sudah siap, jadi pekerjaan di repo ini dimulai dari Astro.
+
+PRD/SDD adalah sumber kebenaran untuk kontrak data, state halaman, dan acceptance criteria. Baca bagian "Kontrak data" dan "Desain frontend (Astro) — spec Slice 5" sebelum mengerjakan fitur. Sisi OMS (Laravel, Slice 1–4 dan 7) ada di repo lain.
+
+## Alur kerja
+
+- Project ini memakai spec-driven development: tulis `spec.md`, `plan.md`, dan `tasks.md` di `specs/<nomor>-<nama>/` sebelum implementasi.
+- PRD dan semua isi `specs/` hanya ada di lokal. Keduanya di-gitignore dan tidak boleh masuk GitHub.
+- **Setiap fitur yang selesai dan lolos testing wajib langsung di-commit dan di-push ke GitHub** sebelum lanjut ke fitur berikutnya. Jalankan `npm run verify` dulu.
+
+## Perintah
+
+```sh
+npm run dev               # dev server Astro (tanpa Pages Function)
+astro dev --background    # mode background; kelola dengan astro dev stop|status|logs
+npm run pages:dev         # build lalu wrangler pages dev: halaman + Function + R2 lokal
+npm run seed [skenario]   # isi R2 lokal dari fixture
+npm run build             # build statis ke dist/
+npm run verify            # format:check, lint, check, test, dan build sekaligus
+npm run lint              # ESLint
+npm run format            # Prettier
+npm run check             # astro check dan typecheck functions/
+npm test                  # Vitest
+npx vitest run tests/format.test.ts   # satu file test
+npx vitest run -t "nama test"         # satu test
+```
+
+Node `>=22.23.4` (lihat `engines` di `package.json`). `npm run seed` hanya menulis ke R2 lokal; jangan menjalankan `wrangler r2` tanpa `--local`, karena itu menyentuh bucket `dss` produksi.
+
+## Arsitektur
+
+Pola _publish snapshot_: OMS menghitung ranking dan meng-upload JSON ke bucket R2 privat `dss`. Browser mengambil data lewat Pages Function, tidak pernah ke VPS OMS.
+
+```
+OMS (Laravel) → R2 bucket dss → Pages Function + caches.default → browser
+```
+
+- **Halaman:** Astro output statis, Tailwind v4 lewat plugin Vite (`@tailwindcss/vite`, diimpor di `src/styles/global.css`), mobile-first, tanpa scroll horizontal di lebar 360 px.
+- **Client:** satu script vanilla TypeScript `src/scripts/leaderboard.ts` untuk fetch, render, dan refresh. Formatter di `src/lib/format.ts`. Tanpa React (NFR-03).
+- **Function:** `functions/api/[leaderboard]/[key].ts` membaca R2 lewat binding `LEADERBOARD_BUCKET` (dideklarasikan di `wrangler.toml`). Folder `functions/` ada di root repo, bukan di `src/`.
+- **Dev lokal:** `fixtures/terbaru.json` mengisi bucket R2 lokal.
+
+## Aturan yang mudah terlewat
+
+- Frontend hanya memformat. `rank` dan `nilai_bersih` dipakai apa adanya dari JSON; jangan menghitung ulang atau mengurutkan ulang. Rank kembar (1, 2, 3, 3, 5) tampil sama.
+- Tolak `schema_version` selain `1` dengan pesan "Format data tidak dikenali".
+- Format tanggal dan uang memakai `Intl`, locale `id-ID`, zona `Asia/Jakarta`. Rupiah tampil seperti `Rp5.155.000`, tanpa desimal.
+- Saat fetch gagal, data yang sudah tampil tidak boleh dihapus.
+- Refresh tiap 5 menit hanya saat `document.visibilityState === 'visible'`, demi kuota request Function.
+- Function adalah batas keamanan bucket: `leaderboard` harus ada di whitelist dan di Slice 5 `key` hanya boleh `terbaru`. Selain itu balas 404, termasuk `index`, `YYYY-MM`, dan key berisi `..`. Error R2 dibalas 502 tanpa detail internal.
+- Halaman history dan akses khusus di luar scope Slice 5.
+- Teks antarmuka berbahasa Indonesia.
