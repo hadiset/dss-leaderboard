@@ -1,0 +1,14 @@
+{
+	"schema_version": 1,
+	"leaderboard": "sekolah-seller_end-user",
+	"platform": "Sekolah Seller",
+	"tier": "End User",
+	"periode": {
+		"key": "2026-11",
+		"dari": "2026-11-01",
+		"sampai": "2026-11-30"
+	},
+	"final": false,
+	"diperbarui": "2026-11-04T11:00:02+07:00",
+	"data": []
+}

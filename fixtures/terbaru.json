@@ -1,0 +1,75 @@
+{
+	"schema_version": 1,
+	"leaderboard": "sekolah-seller_end-user",
+	"platform": "Sekolah Seller",
+	"tier": "End User",
+	"periode": {
+		"key": "2026-11",
+		"dari": "2026-11-01",
+		"sampai": "2026-11-30"
+	},
+	"final": false,
+	"diperbarui": "2026-11-04T11:00:02+07:00",
+	"data": [
+		{
+			"rank": 1,
+			"nama": "Seller A",
+			"nilai_bersih": 5155000
+		},
+		{
+			"rank": 2,
+			"nama": "Seller B",
+			"nilai_bersih": 4945000
+		},
+		{
+			"rank": 3,
+			"nama": "Seller C",
+			"nilai_bersih": 190000
+		},
+		{
+			"rank": 3,
+			"nama": "Seller D",
+			"nilai_bersih": 190000
+		},
+		{
+			"rank": 5,
+			"nama": "Seller E",
+			"nilai_bersih": 185000
+		},
+		{
+			"rank": 6,
+			"nama": "Seller F",
+			"nilai_bersih": 172500
+		},
+		{
+			"rank": 7,
+			"nama": "Seller G",
+			"nilai_bersih": 150000
+		},
+		{
+			"rank": 7,
+			"nama": "Seller H",
+			"nilai_bersih": 150000
+		},
+		{
+			"rank": 9,
+			"nama": "Seller I",
+			"nilai_bersih": 120000
+		},
+		{
+			"rank": 10,
+			"nama": "Seller J",
+			"nilai_bersih": 98000
+		},
+		{
+			"rank": 11,
+			"nama": "Seller K",
+			"nilai_bersih": 75000
+		},
+		{
+			"rank": 12,
+			"nama": "Seller L",
+			"nilai_bersih": 40000
+		}
+	]
+}
