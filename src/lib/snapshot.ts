@@ -5,7 +5,7 @@ export const REFRESH_MS = 5 * 60 * 1000;
 export interface Entri {
 	rank: number;
 	nama: string;
-	/** OMS publishes a masked string such as "5.6xx.xxx"; the PRD contract is an integer. */
+	/** Masked by OMS, such as "5.6xx.xxx". Plain numbers are still accepted. */
 	nilai_bersih: number | string;
 }
 
@@ -36,7 +36,7 @@ function isEntri(value: unknown): value is Entri {
 /** Returns null when the payload is not a snapshot this page understands. */
 export function parseSnapshot(value: unknown): Snapshot | null {
 	const snapshot = value as (Omit<Snapshot, 'periode'> & { periode?: PeriodeMentah }) | null;
-	// OMS publishes periode.bulan; the PRD contract calls it periode.key.
+	// periode.key is the older name for periode.bulan.
 	const key = snapshot?.periode?.key ?? snapshot?.periode?.bulan;
 	const valid =
 		snapshot?.schema_version === SCHEMA_VERSION &&

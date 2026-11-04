@@ -17,7 +17,7 @@ describe('parseSnapshot', () => {
 		expect(snapshot?.data).toEqual(terbaru.data);
 	});
 
-	it('accepts the PRD contract shape', () => {
+	it('still accepts the older key and numeric shape', () => {
 		const snapshot = parseSnapshot({
 			...terbaru,
 			periode: { key: '2026-11' },
